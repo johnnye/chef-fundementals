@@ -7,6 +7,8 @@
 # All rights reserved - Do Not Redistribute
 #
 
+node.default["pci"]["in_scope"] = true
+
 template "/etc/motd" do 
 	source "motd.erb"
 	mode "0644"
