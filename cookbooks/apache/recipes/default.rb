@@ -12,10 +12,6 @@ package "httpd" do
 	action :install
 end
 
-service "httpd" do
-	action [:enable, :start]
-end
-
 execute "mv /etc/httpd/conf.d/welcome.conf /etc/httpd/conf.d/welcome.conf.disabled" do
 	only_if do
 		File.exist?("/etc/httpd/conf.d/welcome.conf")
@@ -44,5 +40,8 @@ node.default["apache"]["sites"].each do |site_name, site_data|
 		mode "0644"
 		variables(:site_name => site_name, :port => site_data["port"])
 	end
+end
 
+service "httpd" do
+	action [:enable, :start]
 end
