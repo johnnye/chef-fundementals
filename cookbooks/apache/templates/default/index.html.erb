@@ -1,21 +1,16 @@
 <html>
-<head>
-<style type="text/css">
-	body{
-		font-family: monospace;
-	}
-	.clowns{
-		background-color: red;
-	}
-	.bears{
-		background-color: brown;
-	}
-</style>
-</head>
-<body>
-<h1 class="<%= @site_name %>">Hello <%= @site_name %></h1>
-<p>Look at my awesome chef books!</p>
-<p><img src="http://i.giphy.com/14q9faQbmSMy6A.gif"></p>
-<p><small><%= node["ipaddress"] %>:<%= @port %></small></p>
-</body>
+	<body>
+		<h1>Welcome to <%=  node["company"] %>!</h1>
+		<h2>Hello from <%= node["fqdn"]%>!</h2>
+		<p>
+			This server has <%= node['memory']['total'].to_i / 1024 %>MB memory.
+		</P>
+		<h1>Welcome to <%=  node["motd"]["company"] %>!</h1>
+		<h2>We love <%=  @site_name %>!</h2>
+		<%= node["ipaddress"] %>:<%= @port %>
+		<p>
+			This version is 0.4.0 of the cookbook!
+			This change is simple but an effective way of demonstrating cookbook versions.
+		</p>
+	</body>
 </html>

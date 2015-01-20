@@ -2,47 +2,66 @@
 # Cookbook Name:: apache
 # Recipe:: default
 #
-# Copyright 2015, Biggins Co.
+# Copyright 2014, YOUR_COMPANY_NAME
 #
 # All rights reserved - Do Not Redistribute
 #
+# chef-repo/cookbooks/apache/recipes/default.rb
 
-
-package "httpd" do 
+# install apache
+package node["package_name"] do
 	action :install
 end
 
-execute "mv /etc/httpd/conf.d/welcome.conf /etc/httpd/conf.d/welcome.conf.disabled" do
-	only_if do
-		File.exist?("/etc/httpd/conf.d/welcome.conf")
-	end
-	notifies :restart, "service[httpd]"
+
+
+# template "#{node["document_root"]}/index.html" do
+# 	source "index.html.erb"
+# 	owner "root"
+# 	group "root"
+# 	mode "0644"
+# end
+
+ 
+execute "mv /etc/httpd/conf.d/welcome.conf /etc/httpd/conf.d/welcome.conf.bak" do
+  only_if do
+    File.exist?("/etc/httpd/conf.d/welcome.conf")
+  end
+  notifies :restart, "service[httpd]"
+end
+ 
+node['apache']['sites'].each do |site_name, site_data|
+  document_root = "/srv/apache/#{site_name}"
+ 
+  template "/etc/httpd/conf.d/#{site_name}.conf" do
+    source "custom.erb"
+    mode "0644"
+    variables(
+      :document_root => document_root,
+      :port => site_data['port']
+    )
+    notifies :restart, "service[httpd]"
+  end
+ 
+  directory document_root do
+    mode "0755"
+    recursive true
+  end
+ 
+  template "#{document_root}/index.html" do
+    source "index.html.erb"
+    mode "0644"
+    variables(
+      :site_name => site_name,
+      :port => site_data['port']
+    )
+  end
 end
 
-node.default["apache"]["sites"].each do |site_name, site_data|
-	
-	document_root = "/srv/apache/#{site_name}"
-	log "#{document_root} - #{site_data["port"]}"
-	
-	template "/etc/httpd/conf.d/#{site_name}.conf" do
-		source "custom.erb"
-		mode "0644"
-		variables(:document_root => document_root, :port => site_data["port"])
-		notifies :restart, "service[httpd]"
-	end
-
-	directory document_root do
-		mode "0755"
-		recursive true
-	end
-
-	template "#{document_root}/index.html" do
-		source "index.html.erb"
-		mode "0644"
-		variables(:site_name => site_name, :port => site_data["port"])
-	end
+# start apache service
+# make sure the apache service starts on reboot
+service node["service_name"] do
+	action [ :enable, :start ]
 end
 
-service "httpd" do
-	action [:enable, :start]
-end
+

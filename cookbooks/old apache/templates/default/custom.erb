@@ -1,7 +1,7 @@
 <% if @port != 80 -%>
-  Listen <%= @port %>
+Listen <%= @port %>
 <% end -%>
- 
+
 <VirtualHost *:<%= @port %>>
 	ServerAdmin webmaster@localhost
  
