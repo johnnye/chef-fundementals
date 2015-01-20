@@ -19,7 +19,7 @@ execute "mv /etc/httpd/conf.d/welcome.conf /etc/httpd/conf.d/welcome.conf.disabl
 	notifies :restart, "service[httpd]"
 end
 
-node.default["apache"]["sites"].each do |site_name, site_data|
+node["apache"]["sites"].each do |site_name, site_data|
 	
 	document_root = "/srv/apache/#{site_name}"
 	log "#{document_root} - #{site_data["port"]}"
