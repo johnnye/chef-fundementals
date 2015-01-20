@@ -22,7 +22,8 @@ end
 node.default["apache"]["sites"].each do |site_name, site_data|
 	
 	document_root = "/srv/apache/#{site_name}"
-
+	log "#{document_root} - #{site_data["port"]}"
+	
 	template "/etc/httpd/conf.d/#{site_name}.conf" do
 		source "custom.erb"
 		mode "0644"
